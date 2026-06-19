@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# teamdolly.co.za
 
-## Getting Started
+Official merchandise store and booking platform for Team Dolly (Dolly Ditebogo), a DJ and artist based in Pretoria, South Africa. Built for Daflame (PTY) Ltd.
 
-First, run the development server:
+## Live Site
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+[https://teamdolly.co.za](https://teamdolly.co.za)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## What I Built
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Product catalog with real-time color/size selection
+- Shopping cart with state management
+- Order tracking via Supabase database
+- PayFast payment integration (South African payment processor)
+- Artist booking section with WhatsApp, Spotify, YouTube, Instagram, TikTok links
+- Responsive design with Framer Motion animations
+- Custom domain deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Stack
 
-## Learn More
+| Layer      | Tool                              |
+| ---------- | --------------------------------- |
+| Framework  | Next.js 15 (App Router)           |
+| Language   | TypeScript                        |
+| Styling    | Tailwind CSS                      |
+| Database   | Supabase (PostgreSQL)             |
+| Storage    | Supabase Storage (product images) |
+| Payments   | PayFast                           |
+| Animations | Framer Motion                     |
+| Deployment | Vercel                            |
+| Domain     | teamdolly.co.za                   |
 
-To learn more about Next.js, take a look at the following resources:
+## Key Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Dynamic product images**: Color selection triggers image swap with smooth transitions
+- **Cart persistence**: Local state management with item count
+- **Database-driven products**: All SKUs stored in Supabase with Row Level Security
+- **Real images**: Product photos hosted on Supabase Storage CDN
+- **Mobile-first**: Responsive grid layout, touch-friendly selectors
