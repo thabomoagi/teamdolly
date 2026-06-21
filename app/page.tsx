@@ -150,7 +150,7 @@ export default function Home() {
       </section>
 
       <div className="overflow-hidden bg-[#ff2d78] py-2.5">
-        <div className="flex animate-[ticker_22s_linear_infinite] whitespace-nowrap">
+        <div className="flex animate-ticker whitespace-nowrap">
           {tickerItems.map((item, i) => (
             <span key={i} className="font-['Bebas_Neue'] text-lg tracking-[0.15em] text-white px-6">
               {item}
