@@ -12,6 +12,9 @@ interface Order {
   size: string
   quantity: number
   email: string | null
+  customer_name: string | null
+  phone: string | null
+  address: string | null
   status: string
   created_at: string
 }
