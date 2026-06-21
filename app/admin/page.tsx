@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 
@@ -18,6 +19,17 @@ interface Order {
 export default function AdminPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        router.push('/auth')
+      }
+    }
+    checkAuth()
+  }, [router])
 
   useEffect(() => {
     fetchOrders()
@@ -77,6 +89,9 @@ export default function AdminPage() {
                 <th className="p-3">Qty</th>
                 <th className="p-3">Price</th>
                 <th className="p-3">Email</th>
+                <th className="p-3">Name</th>
+                <th className="p-3">Phone</th>
+                <th className="p-3">Address</th>
                 <th className="p-3">Status</th>
                 <th className="p-3">Action</th>
               </tr>
@@ -91,6 +106,9 @@ export default function AdminPage() {
                   <td className="p-3">{order.quantity}</td>
                   <td className="p-3">R{order.price}</td>
                   <td className="p-3 text-[#888]">{order.email || '-'}</td>
+                  <td className="p-3">{order.customer_name || '-'}</td>
+                  <td className="p-3">{order.phone || '-'}</td>
+                  <td className="p-3 text-[#888] max-w-xs truncate">{order.address || '-'}</td>
                   <td className="p-3">
                     <span className={`px-2 py-1 rounded text-xs ${order.status === 'paid' ? 'bg-[#1db954]/20 text-[#1db954]' : order.status === 'shipped' ? 'bg-[#3a7bd5]/20 text-[#3a7bd5]' : 'bg-[#f5d000]/20 text-[#f5d000]'}`}>
                       {order.status}

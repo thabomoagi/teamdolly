@@ -1,5 +1,6 @@
 'use client'
 
+import { supabase } from '@/lib/supabase'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
@@ -26,23 +27,39 @@ export default function CheckoutPage() {
 
   const handleCheckout = () => {
     if (!name || !phone || !address) {
-      alert('Please fill in all required fields')
-      return
+        alert('Please fill in all required fields')
+        return
     }
     
     const orderData = {
-      items: cart,
-      total,
-      customer: { name, phone, address, email }
+        items: cart,
+        total,
+        customer: { name, phone, address, email }
     }
     
     localStorage.setItem('teamdolly-order', JSON.stringify(orderData))
     
+    // Save to Supabase
+    cart.forEach(async (item) => {
+        await supabase.from('orders').insert({
+        product_name: `TeamDolly Tee — ${item.color}, ${item.size}`,
+        price: item.price * item.quantity,
+        color: item.color,
+        size: item.size,
+        quantity: item.quantity,
+        email: email || null,
+        customer_name: name,
+        phone: phone,
+        address: address,
+        status: 'pending'
+        })
+    })
+  
     const itemNames = cart.map(i => `TeamDolly Tee ${i.color} ${i.size} x${i.quantity}`).join(', ')
-    const payfastUrl = `https://www.payfast.co.za/eng/process?amount=${total}&item_name=${encodeURIComponent(itemNames)}&return_url=${encodeURIComponent('https://teamdolly.co.za/success')}&cancel_url=${encodeURIComponent('https://teamdolly.co.za/cart')}`
-    
-    window.location.href = payfastUrl
-  }
+  const payfastUrl = `https://www.payfast.co.za/eng/process?amount=${total}&item_name=${encodeURIComponent(itemNames)}&return_url=${encodeURIComponent('https://teamdolly.co.za/success')}&cancel_url=${encodeURIComponent('https://teamdolly.co.za/cart')}`
+  
+  window.location.href = payfastUrl
+}
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8] font-sans">
