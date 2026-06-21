@@ -19,7 +19,7 @@ const COLORS = [
 
 const SIZES = ['S', 'M', 'L', 'XL']
 
-const TICKER_ITEMS = ['TEAM DOLLY', 'OFFICIAL MERCH', 'PRETORIA', 'LEKOMPO', 'AMAPIANO', 'AFROBEATS']
+const TICKER_ITEMS = ['TEAM DOLLY', 'OFFICIAL MERCH', 'LEKOMPO', 'MAKOMPO PITORI']
 
 export default function Home() {
   const [color, setColor] = useState(COLORS[0])
@@ -267,11 +267,6 @@ export default function Home() {
                 style={{ opacity: showMsg ? 1 : 0, minHeight: '1.25rem' }}
               >
                 {cartMsg}
-              </div>
-
-              <div className="flex gap-3 bg-[#171717] border border-[#2a2a2a] rounded p-3 text-[13px] text-[#888] leading-relaxed">
-                <span>📦</span>
-                <span>Delivered within South Africa</span>
               </div>
             </div>
           </div>
