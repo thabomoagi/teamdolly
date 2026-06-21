@@ -2,16 +2,17 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
 
 const BASE = 'https://idxscsrkxxbopxjkgisb.supabase.co/storage/v1/object/public/product-images/'
 
 const COLORS = [
   { name: 'Pink',   hex: '#ff69b4', img: 'shirt-pink.JPG' },
-  { name: 'Black',  hex: '#1a1a1a', img: 'shirt-black.JPG' },
-  { name: 'White',  hex: '#f0f0f0', img: 'shirt-white.jpeg' },
-  { name: 'Yellow', hex: '#f5d000', img: 'shirt-yellow.JPG' },
   { name: 'Blue',   hex: '#3a7bd5', img: 'shirt-blue.JPG' },
   { name: 'Orange', hex: '#ff6b35', img: 'shirt-orange.JPG' },
+  { name: 'Black',  hex: '#1a1a1a', img: 'shirt-black.JPG' },
+  { name: 'Yellow', hex: '#f5d000', img: 'shirt-yellow.JPG' },
+  { name: 'White',  hex: '#f0f0f0', img: 'shirt-white.jpeg' },
 ]
 
 const SIZES = ['S', 'M', 'L', 'XL']
@@ -79,10 +80,13 @@ export default function Home() {
       </nav>
 
       <section id="hero" className="relative h-screen flex flex-col items-center justify-end pb-20 overflow-hidden">
-        <img
+        <Image
           src={`${BASE}shirt-all.jpeg`}
           alt="Team Dolly crew"
-          className="absolute inset-0 w-full h-full object-cover object-top"
+          fill
+          className="object-cover object-top"
+          priority
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/50 to-[#0a0a0a]" />
 
@@ -154,16 +158,22 @@ export default function Home() {
 
             <div className="relative aspect-[3/4] bg-[#171717] rounded overflow-hidden border border-[#2a2a2a]">
               <AnimatePresence mode="wait">
-                <motion.img
+                <motion.div
                   key={imgKey}
-                  src={BASE + color.img}
-                  alt={`TeamDolly tee in ${color.name}`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25 }}
-                  className="absolute inset-0 w-full h-full object-cover object-top"
-                />
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src={BASE + color.img}
+                    alt={`TeamDolly tee in ${color.name}`}
+                    fill
+                    className="object-cover object-top"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </motion.div>
               </AnimatePresence>
               <span className="absolute top-3 left-3 bg-[#f5d000] text-black text-[10px] font-bold tracking-[0.12em] uppercase px-3 py-1 rounded-full">
                 New drop
@@ -254,10 +264,13 @@ export default function Home() {
       </section>
 
       <section id="book" className="relative h-screen flex flex-col items-center justify-end pb-20 overflow-hidden">
-        <img
+        <Image
           src={`${BASE}dolly.JPG`}
           alt="Dolly Ditebogo"
-          className="absolute inset-0 w-full h-full object-cover object-top"
+          fill
+          className="object-cover object-top"
+          priority
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/50 to-[#0a0a0a]" />
 
