@@ -1,8 +1,9 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Image from 'next/image'
+
 
 const BASE = 'https://idxscsrkxxbopxjkgisb.supabase.co/storage/v1/object/public/product-images/'
 
