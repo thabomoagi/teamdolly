@@ -1,7 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 
@@ -24,6 +25,11 @@ export default function Home() {
   const [color, setColor] = useState(COLORS[0])
   const [size, setSize] = useState<string | null>(null)
   const [cartCount, setCartCount] = useState(0)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('teamdolly-cart')
+    if (saved) setCartCount(JSON.parse(saved).length)
+  }, [])
   const [cartMsg, setCartMsg] = useState('')
   const [showMsg, setShowMsg] = useState(false)
   const [imgKey, setImgKey] = useState(0)
@@ -40,7 +46,15 @@ export default function Home() {
       setTimeout(() => setSizeError(false), 800)
       return
     }
-    setCartCount(n => n + 1)
+    
+    const item = { color: color.name, size, price: 400, quantity: 1 }
+    const existing = JSON.parse(localStorage.getItem('teamdolly-cart') || '[]')
+    const updated = [...existing, item]
+    localStorage.setItem('teamdolly-cart', JSON.stringify(updated))
+
+    localStorage.setItem('teamdolly-cart', JSON.stringify(updated))
+    
+    setCartCount(updated.length)
     setCartMsg(`${color.name} / ${size} added`)
     setShowMsg(true)
     setTimeout(() => setShowMsg(false), 2500)
@@ -67,8 +81,8 @@ export default function Home() {
             </li>
           ))}
         </ul>
-        <button
-          onClick={() => document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' })}
+        <Link
+          href="/cart"
           className="flex items-center gap-2 px-4 py-1.5 text-xs tracking-widest uppercase border border-[#2a2a2a] rounded-full hover:border-[#ff2d78] hover:text-[#ff2d78] transition-colors bg-transparent text-[#e8e8e8]"
         >
           Cart
@@ -77,7 +91,7 @@ export default function Home() {
               {cartCount}
             </span>
           )}
-        </button>
+        </Link>
       </nav>
 
       <section id="hero" className="relative h-screen flex flex-col items-center justify-end pb-20 overflow-hidden">
