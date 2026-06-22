@@ -304,7 +304,7 @@ export default function Home() {
             className="flex gap-3 justify-center flex-wrap"
           >
             <a
-              href="https://wa.me/27662317303"
+              href="https://wa.me/27792452649"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 bg-[#25d366] text-white px-7 py-3 rounded-full text-sm font-semibold tracking-widest uppercase hover:bg-[#128c7e] transition-colors"
