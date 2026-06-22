@@ -59,7 +59,18 @@ export default function CartPage() {
           <div className="space-y-6">
             {cart.map((item, i) => (
               <div key={i} className="flex items-center gap-6 bg-[#171717] border border-[#2a2a2a] rounded p-4">
-                <div className="w-20 h-20 rounded bg-[#0a0a0a] flex items-center justify-center text-xs text-[#444]">
+                <div 
+                  className="w-20 h-20 rounded flex items-center justify-center text-xs"
+                  style={{ 
+                    backgroundColor: item.color === 'White' ? '#f0f0f0' : 
+                                    item.color === 'Pink' ? '#ff69b4' : 
+                                    item.color === 'Black' ? '#1a1a1a' : 
+                                    item.color === 'Yellow' ? '#f5d000' : 
+                                    item.color === 'Blue' ? '#3a7bd5' : 
+                                    item.color === 'Orange' ? '#ff6b35' : '#0a0a0a',
+                    color: item.color === 'White' || item.color === 'Yellow' ? '#000' : '#fff'
+                  }}
+                >
                   {item.color}
                 </div>
                 <div className="flex-1">
