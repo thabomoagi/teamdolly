@@ -56,10 +56,13 @@ export default function CheckoutPage() {
     })
   
     const itemNames = cart.map(i => `TeamDolly Tee ${i.color} ${i.size} x${i.quantity}`).join(', ')
-  const payfastUrl = `https://www.payfast.co.za/eng/process?amount=${total}&item_name=${encodeURIComponent(itemNames)}&return_url=${encodeURIComponent('https://teamdolly.co.za/success')}&cancel_url=${encodeURIComponent('https://teamdolly.co.za/cart')}`
-  
-  window.location.href = payfastUrl
-}
+    const merchantId = process.env.NEXT_PUBLIC_PAYFAST_MERCHANT_ID
+    const merchantKey = process.env.NEXT_PUBLIC_PAYFAST_MERCHANT_KEY
+
+    const payfastUrl = `https://www.payfast.co.za/eng/process?merchant_id=${merchantId}&merchant_key=${merchantKey}&amount=${total}&item_name=${encodeURIComponent(itemNames)}&return_url=${encodeURIComponent('https://teamdolly.co.za/success')}&cancel_url=${encodeURIComponent('https://teamdolly.co.za/cart')}`
+    
+    window.location.href = payfastUrl
+  }
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8] font-sans">
