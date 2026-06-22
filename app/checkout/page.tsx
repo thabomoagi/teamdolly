@@ -21,6 +21,8 @@ const isValidEmail = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
+const sanitize = (str: string) => str.replace(/[<>]/g, '').trim()
+
 export default function CheckoutPage() {
   const [cart, setCart] = useState<CartItem[]>([])
   const [name, setName] = useState('')
@@ -49,6 +51,11 @@ export default function CheckoutPage() {
     if (address.trim().length < 10) newErrors.address = 'Enter a complete delivery address'
     if (email && !isValidEmail(email)) newErrors.email = 'Invalid email address'
 
+    const lastOrder = localStorage.getItem('teamdolly-last-order')
+    if (lastOrder && Date.now() - parseInt(lastOrder) < 60000) {
+      newErrors.submit = 'Please wait 1 minute between orders'
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
       return
@@ -57,10 +64,14 @@ export default function CheckoutPage() {
     setErrors({})
     setPaying(true)
 
+    const cleanName = sanitize(name)
+    const cleanAddress = sanitize(address)
+    const cleanEmail = email ? sanitize(email) : null
+
     const orderData = {
       items: cart,
       total,
-      customer: { name, phone, address, email }
+      customer: { name: cleanName, phone, address: cleanAddress, email: cleanEmail }
     }
 
     localStorage.setItem('teamdolly-order', JSON.stringify(orderData))
@@ -72,10 +83,10 @@ export default function CheckoutPage() {
         color: item.color,
         size: item.size,
         quantity: item.quantity,
-        email: email || null,
-        customer_name: name,
+        email: cleanEmail,
+        customer_name: cleanName,
         phone: phone,
-        address: address,
+        address: cleanAddress,
         status: 'pending'
       })
     })
@@ -86,6 +97,7 @@ export default function CheckoutPage() {
 
     const payfastUrl = `https://www.payfast.co.za/eng/process?merchant_id=${merchantId}&merchant_key=${merchantKey}&amount=${total}&item_name=${encodeURIComponent(itemNames)}&return_url=${encodeURIComponent('https://teamdolly.co.za/success')}&cancel_url=${encodeURIComponent('https://teamdolly.co.za/cart')}`
 
+    localStorage.setItem('teamdolly-last-order', Date.now().toString())
     window.location.href = payfastUrl
   }
 
@@ -172,15 +184,17 @@ export default function CheckoutPage() {
                 />
                 {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
               </div>
-            </div>
 
-            <button
-              onClick={handleCheckout}
-              disabled={paying}
-              className="w-full bg-[#ff2d78] text-white py-4 rounded font-semibold tracking-widest uppercase hover:bg-[#e0135f] transition-colors disabled:opacity-50"
-            >
-              {paying ? 'Redirecting to PayFast...' : `Pay with PayFast — R${total}`}
-            </button>
+              {errors.submit && <p className="text-red-500 text-sm text-center">{errors.submit}</p>}
+
+              <button
+                onClick={handleCheckout}
+                disabled={paying}
+                className="w-full bg-[#ff2d78] text-white py-4 rounded font-semibold tracking-widest uppercase hover:bg-[#e0135f] transition-colors disabled:opacity-50"
+              >
+                {paying ? 'Redirecting to PayFast...' : `Pay with PayFast — R${total}`}
+              </button>
+            </div>
           </div>
         )}
       </div>
