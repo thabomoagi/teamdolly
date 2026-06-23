@@ -280,47 +280,62 @@ export default function Home() {
 
       {/* Events Section */}
       <section id="events" className="py-24 px-4 bg-[#0d0d0d] border-t border-b border-[#1a1a1a]">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="font-['Bebas_Neue'] text-[clamp(2.5rem,6vw,5rem)] leading-none text-white mb-14">
-            Upcoming Events
-          </h2>
+        <div className="max-w-4xl mx-auto space-y-10">
+          <div className="text-center">
+            <span className="text-[#ff2d78] font-mono text-xs tracking-[0.2em] uppercase block mb-2">
+              Birthday Celebration
+            </span>
+            <h2 className="font-['Bebas_Neue'] text-[clamp(2.5rem,6vw,5rem)] leading-none text-white m-0">
+              MAKOMPO PITORI: DOLLY'S BIRTHDAY BASH
+            </h2>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div className="relative aspect-[3/4] bg-[#171717] rounded overflow-hidden border border-[#2a2a2a]">
-              <Image
-                src={`${BASE}event.jpeg`}
-                alt="Makompo Pitori Live Event Poster"
-                fill
-                className="object-cover object-center"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
+          {/* Image Container: Perfectly locked to 16:9 landscape aspect ratio */}
+          <div className="relative aspect-[16/9] w-full bg-[#171717] rounded overflow-hidden border border-[#2a2a2a]">
+            <Image
+              src={`${BASE}event.jpeg`}
+              alt="Makompo Pitori Live Event Poster"
+              fill
+              className="object-cover object-center"
+              sizes="(max-width: 1024px) 100vw, 896px"
+              priority
+            />
+          </div>
+
+          {/* Event Details & Extensive Lineup */}
+          <div className="bg-[#111] p-8 rounded border border-[#1a1a1a] space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm border-b border-[#2a2a2a] pb-6 text-[#aaa]">
+              <p><strong className="text-white uppercase tracking-wider font-mono text-xs block mb-1">Venue</strong> Pretoria, South Africa</p>
+              <p><strong className="text-white uppercase tracking-wider font-mono text-xs block mb-1">Vibe</strong> Experience the ultimate Lekompo environment live.</p>
             </div>
 
-            <div className="space-y-6">
-              <div>
-                <span className="text-[#ff2d78] font-mono text-xs tracking-[0.2em] uppercase block mb-2">
-                  Birthday Celebration
-                </span>
-                <h3 className="font-['Bebas_Neue'] text-5xl text-white tracking-wide leading-tight">
-                  MAKOMPO PITORI:<br />Dolly's Birthday Bash
-                </h3>
+            {/* Structured Lineup Section */}
+            <div className="text-center space-y-3">
+              <h4 className="font-['Bebas_Neue'] text-2xl tracking-wider text-[#ff2d78]">
+                Official Lineup
+              </h4>
+              <p className="text-white font-bold text-lg tracking-wide uppercase">
+                Dolly Ditebogo <span className="text-[#ff2d78]/85 font-normal text-sm block sm:inline sm:ml-2">alongside</span>
+              </p>
+              <div className="text-sm text-[#aaa] leading-relaxed max-w-2xl mx-auto font-medium">
+                {[
+                  'Poobington', 'Westboy Chillibite', 'Real K Mafakota', 'Dimphowadiwave', 
+                  'Jojo Manjaro', 'BigBaller CEO', 'KayCherlow', 'Amogelang', 'Paballo Noko', 
+                  'ZilleWizzy', 'DJ Coach', 'DJ Liquidator', 'Clement', 'Hitboss', 'Shapa Memie', 
+                  'PLXBOII Blessi', 'Riri AJ', 'Inkreys', 'Fortune', 'Ray Goat', 'Dil Bill', 
+                  'Naqua', 'Babethe Gashoazen', 'Ladytone', 'Sasha', 'DJ Ayanda'
+                ].join(' • ')}
               </div>
-
-              <div className="border-l-2 border-[#ff2d78] pl-4 space-y-2 text-sm text-[#aaa]">
-                <p><strong className="text-white">Venue:</strong> Pretoria, South Africa</p>
-                <p><strong className="text-white">Lineup:</strong> Dolly Ditebogo & Special Guests</p>
-                <p>Experience the ultimate Lekompo environment live.</p>
-              </div>
-
-              <a
-                href={TICKET_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block w-full text-center py-4 bg-white text-black text-sm font-bold tracking-[0.15em] uppercase rounded-sm hover:bg-[#ff2d78] hover:text-white active:scale-[0.99] transition-all"
-              >
-                Secure Tickets via Computicket
-              </a>
             </div>
+
+            <a
+              href={TICKET_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full text-center py-4 bg-white text-black text-sm font-bold tracking-[0.15em] uppercase rounded-sm hover:bg-[#ff2d78] hover:text-white active:scale-[0.99] transition-all"
+            >
+              Secure Tickets via Computicket
+            </a>
           </div>
         </div>
       </section>
