@@ -280,14 +280,11 @@ export default function Home() {
 
       {/* Events Section */}
       <section id="events" className="py-24 px-4 bg-[#0d0d0d] border-t border-b border-[#1a1a1a]">
-        <div className="max-w-4xl mx-auto space-y-10">
+        <div className="max-w-4xl mx-auto space-y-6">
           <div className="text-center">
-            <span className="text-[#ff2d78] font-mono text-xs tracking-[0.2em] uppercase block mb-2">
+            <span className="text-[#ff2d78] font-mono text-xs tracking-[0.2em] uppercase block">
               Birthday Celebration
             </span>
-            <h2 className="font-['Bebas_Neue'] text-[clamp(2.5rem,6vw,5rem)] leading-none text-white m-0">
-              MAKOMPO PITORI: DOLLY'S BIRTHDAY BASH
-            </h2>
           </div>
 
           {/* Image Container: Perfectly locked to 16:9 landscape aspect ratio */}
@@ -302,32 +299,8 @@ export default function Home() {
             />
           </div>
 
-          {/* Event Details & Extensive Lineup */}
-          <div className="bg-[#111] p-8 rounded border border-[#1a1a1a] space-y-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm border-b border-[#2a2a2a] pb-6 text-[#aaa]">
-              <p><strong className="text-white uppercase tracking-wider font-mono text-xs block mb-1">Venue</strong> Pretoria, South Africa</p>
-              <p><strong className="text-white uppercase tracking-wider font-mono text-xs block mb-1">Vibe</strong> Experience the ultimate Lekompo environment live.</p>
-            </div>
-
-            {/* Structured Lineup Section */}
-            <div className="text-center space-y-3">
-              <h4 className="font-['Bebas_Neue'] text-2xl tracking-wider text-[#ff2d78]">
-                Official Lineup
-              </h4>
-              <p className="text-white font-bold text-lg tracking-wide uppercase">
-                Dolly Ditebogo <span className="text-[#ff2d78]/85 font-normal text-sm block sm:inline sm:ml-2">alongside</span>
-              </p>
-              <div className="text-sm text-[#aaa] leading-relaxed max-w-2xl mx-auto font-medium">
-                {[
-                  'Poobington', 'Westboy Chillibite', 'Real K Mafakota', 'Dimphowadiwave', 
-                  'Jojo Manjaro', 'BigBaller CEO', 'KayCherlow', 'Amogelang', 'Paballo Noko', 
-                  'ZilleWizzy', 'DJ Coach', 'DJ Liquidator', 'Clement', 'Hitboss', 'Shapa Memie', 
-                  'PLXBOII Blessi', 'Riri AJ', 'Inkreys', 'Fortune', 'Ray Goat', 'Dil Bill', 
-                  'Naqua', 'Babethe Gashoazen', 'Ladytone', 'Sasha', 'DJ Ayanda'
-                ].join(' • ')}
-              </div>
-            </div>
-
+          {/* Action Call */}
+          <div className="max-w-md mx-auto pt-2">
             <a
               href={TICKET_URL}
               target="_blank"
