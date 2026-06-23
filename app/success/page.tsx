@@ -1,4 +1,27 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+
 export default function SuccessPage() {
+  const router = useRouter()
+  const [isVerified, setIsVerified] = useState(false)
+
+  useEffect(() => {
+    const lastOrder = localStorage.getItem('teamdolly-last-order')
+    const cameFromPayfast = document.referrer.includes('payfast.co.za')
+
+    if ((lastOrder && Date.now() - parseInt(lastOrder) < 300000) || cameFromPayfast) {
+      setIsVerified(true)
+    } else {
+      router.replace('/')
+    }
+  }, [router])
+
+  if (!isVerified) {
+    return null 
+  }
+
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8] font-sans flex items-center justify-center">
       <div className="max-w-md w-full px-6 text-center">
