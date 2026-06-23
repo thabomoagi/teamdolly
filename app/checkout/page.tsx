@@ -74,7 +74,7 @@ export default function CheckoutPage() {
       customer: { name: cleanName, phone, address: cleanAddress, email: cleanEmail }
     }
 
-    localStorage.setItem('teamdolly-order', JSON.stringify(orderData))
+  
 
     cart.forEach(async (item) => {
       await supabase.from('orders').insert({
