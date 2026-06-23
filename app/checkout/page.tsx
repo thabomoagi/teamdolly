@@ -47,7 +47,7 @@ export default function CheckoutPage() {
     const newErrors: Record<string, string> = {}
 
     if (name.trim().length < 2) newErrors.name = 'Enter your full name'
-    if (!isValidPhone(phone)) newErrors.phone = 'Enter a valid SA number (e.g. 0662317303)'
+    if (!isValidPhone(phone)) newErrors.phone = 'Enter a valid SA number (e.g. 0821234567)'
     if (address.trim().length < 10) newErrors.address = 'Enter a complete delivery address'
     if (email && !isValidEmail(email)) newErrors.email = 'Invalid email address'
 
