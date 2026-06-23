@@ -156,7 +156,7 @@ export default function CheckoutPage() {
                   type="tel"
                   value={phone}
                   onChange={e => { setPhone(e.target.value); clearError('phone') }}
-                  placeholder="0662317303"
+                  placeholder="e.g. 082 123 4567"
                   className={`w-full bg-[#171717] border rounded px-4 py-3 text-white focus:border-[#ff2d78] focus:outline-none transition ${errors.phone ? 'border-red-500' : 'border-[#2a2a2a]'}`}
                 />
                 {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
@@ -168,7 +168,7 @@ export default function CheckoutPage() {
                   value={address}
                   onChange={e => { setAddress(e.target.value); clearError('address') }}
                   rows={3}
-                  placeholder="123 Main Street, Pretoria, 0001"
+                  placeholder="e.g. 456 Oak Avenue, Randburg, 2194"
                   className={`w-full bg-[#171717] border rounded px-4 py-3 text-white focus:border-[#ff2d78] focus:outline-none transition ${errors.address ? 'border-red-500' : 'border-[#2a2a2a]'}`}
                 />
                 {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
