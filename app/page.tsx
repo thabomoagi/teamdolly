@@ -5,8 +5,8 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-
 const BASE = 'https://idxscsrkxxbopxjkgisb.supabase.co/storage/v1/object/public/product-images/'
+const TICKET_URL = 'https://computicket-boxoffice.com/e/makompo-pitori-dollys-birthday-GXTNMZ'
 
 const COLORS = [
   { name: 'Pink',   hex: '#ff69b4', img: 'shirt-pink.JPG' },
@@ -25,15 +25,21 @@ export default function Home() {
   const [color, setColor] = useState(COLORS[0])
   const [size, setSize] = useState<string | null>(null)
   const [cartCount, setCartCount] = useState(0)
-
-  useEffect(() => {
-    const saved = localStorage.getItem('teamdolly-cart')
-    if (saved) setCartCount(JSON.parse(saved).length)
-  }, [])
   const [cartMsg, setCartMsg] = useState('')
   const [showMsg, setShowMsg] = useState(false)
   const [imgKey, setImgKey] = useState(0)
   const [sizeError, setSizeError] = useState(false)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('teamdolly-cart')
+    if (saved) {
+      try {
+        setCartCount(JSON.parse(saved).length)
+      } catch (e) {
+        console.error('Error parsing cart items', e)
+      }
+    }
+  }, [])
 
   const handleColor = (c: typeof COLORS[0]) => {
     setColor(c)
@@ -50,8 +56,7 @@ export default function Home() {
     const item = { color: color.name, size, price: 400, quantity: 1 }
     const existing = JSON.parse(localStorage.getItem('teamdolly-cart') || '[]')
     const updated = [...existing, item]
-    localStorage.setItem('teamdolly-cart', JSON.stringify(updated))
-
+    
     localStorage.setItem('teamdolly-cart', JSON.stringify(updated))
     
     setCartCount(updated.length)
@@ -60,17 +65,18 @@ export default function Home() {
     setTimeout(() => setShowMsg(false), 2500)
   }
 
-  const tickerItems = [...TICKER_ITEMS, ...TICKER_ITEMS]
+  const tickerItems = [...TICKER_ITEMS, ...TICKER_ITEMS, ...TICKER_ITEMS, ...TICKER_ITEMS]
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8] font-sans overflow-x-hidden">
+    <main className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8] font-sans overflow-x-hidden select-none">
 
+      {/* Sticky Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#0a0a0a]/85 backdrop-blur-md border-b border-[#2a2a2a]">
         <a href="#hero" className="font-['Bebas_Neue'] text-2xl tracking-widest text-white">
           TEAM <span className="text-[#ff2d78]">DOLLY</span>
         </a>
         <ul className="hidden md:flex gap-8 list-none">
-          {['Shop', 'Book'].map(label => (
+          {['Shop', 'Events', 'Book'].map(label => (
             <li key={label}>
               <a
                 href={`#${label.toLowerCase()}`}
@@ -87,13 +93,14 @@ export default function Home() {
         >
           Cart
           {cartCount > 0 && (
-            <span className="bg-[#ff2d78] text-white text-[10px] px-1.5 rounded-full">
+            <span className="bg-[#ff2d78] text-white text-[10px] px-1.5 rounded-full font-bold">
               {cartCount}
             </span>
           )}
         </Link>
       </nav>
 
+      {/* Hero Section */}
       <section id="hero" className="relative h-screen flex flex-col items-center justify-end pb-20 overflow-hidden">
         <Image
           src={`${BASE}shirt-all.jpeg`}
@@ -122,7 +129,7 @@ export default function Home() {
             transition={{ delay: 0.4 }}
             className="text-[#888] text-sm tracking-[0.12em] uppercase mt-4 mb-8"
           >
-            Official Merch
+            Official Merch & Live Events
           </motion.p>
 
           <motion.div
@@ -135,24 +142,25 @@ export default function Home() {
               href="#shop"
               className="bg-[#ff2d78] text-white px-7 py-3 rounded-full text-sm font-semibold tracking-widest uppercase hover:bg-[#e0135f] transition-colors"
             >
-              Shop now
+              Shop Merch
             </a>
             <a
-              href="https://open.spotify.com/artist/2Ot5RNeKB99oO2qp51ImHd"
+              href={TICKET_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="border border-[#444] text-[#e8e8e8] px-7 py-3 rounded-full text-sm font-medium tracking-widest uppercase hover:border-white hover:text-white transition-colors"
+              className="border border-[#ff2d78] text-[#ff2d78] px-7 py-3 rounded-full text-sm font-semibold tracking-widest uppercase hover:bg-[#ff2d78] hover:text-white transition-colors"
             >
-              Listen on Spotify
+              Get Event Tickets
             </a>
           </motion.div>
         </div>
       </section>
 
+      {/* Ticker Banner */}
       <div className="overflow-hidden bg-[#ff2d78] py-2.5">
-        <div className="flex animate-ticker whitespace-nowrap">
+        <div className="flex animate-ticker whitespace-nowrap min-w-full">
           {tickerItems.map((item, i) => (
-            <span key={i} className="font-['Bebas_Neue'] text-lg tracking-[0.15em] text-white px-6">
+            <span key={i} className="font-['Bebas_Neue'] text-lg tracking-[0.15em] text-white px-6 inline-block flex-shrink-0">
               {item}
               <span className="text-white/30 ml-6">·</span>
             </span>
@@ -160,17 +168,14 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Merch Shop Section */}
       <section id="shop" className="py-24 px-4">
         <div className="max-w-5xl mx-auto">
-          <span className="block font-mono text-[11px] tracking-[0.25em] uppercase text-[#ff2d78] mb-2">
-            
-          </span>
           <h2 className="font-['Bebas_Neue'] text-[clamp(2.5rem,6vw,5rem)] leading-none text-white mb-14">
             The Merch
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-
             <div className="relative aspect-[3/4] bg-[#171717] rounded overflow-hidden border border-[#2a2a2a]">
               <AnimatePresence mode="wait">
                 <motion.div
@@ -178,8 +183,8 @@ export default function Home() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="absolute inset-0"
+                  transition={{ duration: 0.2 }}
+                  className="absolute inset-0 w-full h-full"
                 >
                   <Image
                     src={BASE + color.img}
@@ -190,7 +195,7 @@ export default function Home() {
                   />
                 </motion.div>
               </AnimatePresence>
-              <span className="absolute top-3 left-3 bg-[#f5d000] text-black text-[10px] font-bold tracking-[0.12em] uppercase px-3 py-1 rounded-full">
+              <span className="absolute top-3 left-3 bg-[#f5d000] text-black text-[10px] font-bold tracking-[0.12em] uppercase px-3 py-1 rounded-full z-10">
                 New drop
               </span>
             </div>
@@ -214,7 +219,7 @@ export default function Home() {
                       key={c.name}
                       onClick={() => handleColor(c)}
                       title={c.name}
-                      className="w-9 h-9 rounded-sm transition-transform hover:scale-110"
+                      className="w-9 h-9 rounded-sm transition-transform hover:scale-110 cursor-pointer"
                       style={{
                         background: c.hex,
                         border: color.name === c.name
@@ -237,7 +242,7 @@ export default function Home() {
                     <button
                       key={s}
                       onClick={() => setSize(s)}
-                      className="min-w-[48px] h-10 text-sm tracking-wide rounded-sm transition-all"
+                      className="min-w-[48px] h-10 text-sm tracking-wide rounded-sm transition-all cursor-pointer"
                       style={{
                         background: size === s ? '#fff' : 'transparent',
                         color: size === s ? '#000' : '#888',
@@ -257,13 +262,13 @@ export default function Home() {
 
               <button
                 onClick={addToCart}
-                className="w-full py-4 bg-[#ff2d78] text-white text-sm font-semibold tracking-[0.1em] uppercase rounded-sm hover:bg-[#e0135f] active:scale-[0.99] transition-all"
+                className="w-full py-4 bg-[#ff2d78] text-white text-sm font-semibold tracking-[0.1em] uppercase rounded-sm hover:bg-[#e0135f] active:scale-[0.99] transition-all cursor-pointer"
               >
                 Add to cart
               </button>
 
               <div
-                className="text-center text-sm text-[#1db954] transition-opacity duration-300"
+                className="text-center text-sm text-[#1db954] transition-opacity duration-300 font-semibold"
                 style={{ opacity: showMsg ? 1 : 0, minHeight: '1.25rem' }}
               >
                 {cartMsg}
@@ -273,6 +278,54 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Events Section */}
+      <section id="events" className="py-24 px-4 bg-[#0d0d0d] border-t border-b border-[#1a1a1a]">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="font-['Bebas_Neue'] text-[clamp(2.5rem,6vw,5rem)] leading-none text-white mb-14">
+            Upcoming Events
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div className="relative aspect-[3/4] bg-[#171717] rounded overflow-hidden border border-[#2a2a2a]">
+              <Image
+                src={`${BASE}event.jpeg`}
+                alt="Makompo Pitori Live Event Poster"
+                fill
+                className="object-cover object-center"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <span className="text-[#ff2d78] font-mono text-xs tracking-[0.2em] uppercase block mb-2">
+                  Birthday Celebration
+                </span>
+                <h3 className="font-['Bebas_Neue'] text-5xl text-white tracking-wide leading-tight">
+                  MAKOMPO PITORI:<br />Dolly's Birthday Bash
+                </h3>
+              </div>
+
+              <div className="border-l-2 border-[#ff2d78] pl-4 space-y-2 text-sm text-[#aaa]">
+                <p><strong className="text-white">Venue:</strong> Pretoria, South Africa</p>
+                <p><strong className="text-white">Lineup:</strong> Dolly Ditebogo & Special Guests</p>
+                <p>Experience the ultimate Lekompo environment live.</p>
+              </div>
+
+              <a
+                href={TICKET_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block w-full text-center py-4 bg-white text-black text-sm font-bold tracking-[0.15em] uppercase rounded-sm hover:bg-[#ff2d78] hover:text-white active:scale-[0.99] transition-all"
+              >
+                Secure Tickets via Computicket
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Booking & Media Section */}
       <section id="book" className="relative h-screen flex flex-col items-center justify-end pb-20 overflow-hidden">
         <Image
           src={`${BASE}dolly.JPG`}
