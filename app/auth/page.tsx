@@ -11,18 +11,24 @@ export default function AuthPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setMessage('')
+
+    // Automatically points to local dev or live site depending on where you run it
+    const redirectToUrl = typeof window !== 'undefined' 
+      ? `${window.location.origin}/admin` 
+      : 'https://teamdolly.co.za/admin'
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: 'https://teamdolly.co.za/admin'
+        emailRedirectTo: redirectToUrl
       }
     })
 
     if (error) {
       setMessage(error.message)
     } else {
-      setMessage('Check your email for the login link')
+      setMessage('Check your email for the login link!')
     }
     setLoading(false)
   }
@@ -41,7 +47,7 @@ export default function AuthPage() {
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              className="w-full bg-[#171717] border border-[#2a2a2a] rounded px-4 py-3 text-white focus:border-[#ff2d78] focus:outline-none"
+              className="w-full bg-[#171717] border border-[#2a2a2a] rounded px-4 py-3 text-white focus:border-[#ff2d78] focus:outline-none transition-colors"
               placeholder="admin@daflame.co.za"
             />
           </div>
@@ -55,7 +61,9 @@ export default function AuthPage() {
         </form>
 
         {message && (
-          <p className="mt-4 text-sm text-center text-[#888]">{message}</p>
+          <p className="mt-4 text-sm text-center text-[#ff2d78] bg-[#ff2d78]/10 py-2 px-4 rounded border border-[#ff2d78]/20">
+            {message}
+          </p>
         )}
       </div>
     </main>

@@ -43,7 +43,7 @@ export default function CheckoutPage() {
     setErrors(prev => ({ ...prev, [field]: '' }))
   }
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     const newErrors: Record<string, string> = {}
 
     if (name.trim().length < 2) newErrors.name = 'Enter your full name'
@@ -68,37 +68,42 @@ export default function CheckoutPage() {
     const cleanAddress = sanitize(address)
     const cleanEmail = email ? sanitize(email) : null
 
-    const orderData = {
-      items: cart,
-      total,
-      customer: { name: cleanName, phone, address: cleanAddress, email: cleanEmail }
+    const orderId = `TD-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+
+    const dbOrderRows = cart.map(item => ({
+      order_id: orderId, 
+      product_name: `TeamDolly Tee — ${item.color}, ${item.size}`,
+      price: item.price * item.quantity,
+      color: item.color,
+      size: item.size,
+      quantity: item.quantity,
+      email: cleanEmail,
+      customer_name: cleanName,
+      phone: phone,
+      address: cleanAddress,
+      status: 'pending'
+    }))
+
+    try {
+      const { error: dbError } = await supabase.from('orders').insert(dbOrderRows)
+
+      if (dbError) {
+        throw new Error(dbError.message)
+      }
+
+      const itemNames = cart.map(i => `TeamDolly Tee ${i.color} ${i.size} x${i.quantity}`).join(', ')
+      const merchantId = process.env.NEXT_PUBLIC_PAYFAST_MERCHANT_ID
+      const merchantKey = process.env.NEXT_PUBLIC_PAYFAST_MERCHANT_KEY
+
+      const payfastUrl = `https://www.payfast.co.za/eng/process?merchant_id=${merchantId}&merchant_key=${merchantKey}&amount=${total}&item_name=${encodeURIComponent(itemNames)}&m_payment_id=${orderId}&return_url=${encodeURIComponent('https://teamdolly.co.za/success')}&cancel_url=${encodeURIComponent('https://teamdolly.co.za/cart')}`
+
+      localStorage.setItem('teamdolly-last-order', Date.now().toString())
+      window.location.href = payfastUrl
+
+    } catch (err: any) {
+      setErrors({ submit: err.message || 'Something went wrong while saving your order. Try again.' })
+      setPaying(false)
     }
-
-  
-
-    cart.forEach(async (item) => {
-      await supabase.from('orders').insert({
-        product_name: `TeamDolly Tee — ${item.color}, ${item.size}`,
-        price: item.price * item.quantity,
-        color: item.color,
-        size: item.size,
-        quantity: item.quantity,
-        email: cleanEmail,
-        customer_name: cleanName,
-        phone: phone,
-        address: cleanAddress,
-        status: 'pending'
-      })
-    })
-
-    const itemNames = cart.map(i => `TeamDolly Tee ${i.color} ${i.size} x${i.quantity}`).join(', ')
-    const merchantId = process.env.NEXT_PUBLIC_PAYFAST_MERCHANT_ID
-    const merchantKey = process.env.NEXT_PUBLIC_PAYFAST_MERCHANT_KEY
-
-    const payfastUrl = `https://www.payfast.co.za/eng/process?merchant_id=${merchantId}&merchant_key=${merchantKey}&amount=${total}&item_name=${encodeURIComponent(itemNames)}&return_url=${encodeURIComponent('https://teamdolly.co.za/success')}&cancel_url=${encodeURIComponent('https://teamdolly.co.za/cart')}`
-
-    localStorage.setItem('teamdolly-last-order', Date.now().toString())
-    window.location.href = payfastUrl
   }
 
   return (
@@ -153,7 +158,7 @@ export default function CheckoutPage() {
               <div>
                 <label className="block text-sm text-[#888] mb-2">Phone Number *</label>
                 <input
-                  type="tel"
+                  type="text"
                   value={phone}
                   onChange={e => { setPhone(e.target.value); clearError('phone') }}
                   placeholder="e.g. 082 123 4567"
@@ -185,14 +190,14 @@ export default function CheckoutPage() {
                 {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
               </div>
 
-              {errors.submit && <p className="text-red-500 text-sm text-center">{errors.submit}</p>}
+              {errors.submit && <p className="text-red-500 text-sm text-center bg-red-500/10 border border-red-500/20 py-2 rounded">{errors.submit}</p>}
 
               <button
                 onClick={handleCheckout}
                 disabled={paying}
                 className="w-full bg-[#ff2d78] text-white py-4 rounded font-semibold tracking-widest uppercase hover:bg-[#e0135f] transition-colors disabled:opacity-50"
               >
-                {paying ? 'Redirecting to PayFast...' : `Pay with PayFast — R${total}`}
+                {paying ? 'Processing Order...' : `Pay with PayFast — R${total}`}
               </button>
             </div>
           </div>

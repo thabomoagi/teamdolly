@@ -22,35 +22,46 @@ interface Order {
 export default function AdminPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+  const [isAuthorized, setIsAuthorized] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuthAndFetch = async () => {
       const { data: { session } } = await supabase.auth.getSession()
+      
       if (!session) {
         router.push('/auth')
+        return // Stop right here if not logged in
       }
+
+      // Only run if user is authorized
+      setIsAuthorized(true)
+      
+      const { data } = await supabase
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false })
+      
+      if (data) setOrders(data)
+      setLoading(false)
     }
-    checkAuth()
+
+    checkAuthAndFetch()
   }, [router])
 
-  useEffect(() => {
-    fetchOrders()
-  }, [])
-
-  const fetchOrders = async () => {
+  const updateStatus = async (id: string, status: string) => {
+    await supabase.from('orders').update({ status }).eq('id', id)
+    // Re-fetch clean data safely after update
     const { data } = await supabase
       .from('orders')
       .select('*')
       .order('created_at', { ascending: false })
-    
     if (data) setOrders(data)
-    setLoading(false)
   }
 
-  const updateStatus = async (id: string, status: string) => {
-    await supabase.from('orders').update({ status }).eq('id', id)
-    fetchOrders()
+  // Double check that we are authenticated before rendering calculations
+  if (!isAuthorized) {
+    return null 
   }
 
   const totalRevenue = orders.filter(o => o.status === 'paid').reduce((sum, o) => sum + o.price, 0)

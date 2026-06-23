@@ -20,8 +20,9 @@ export default function CartPage() {
 
   const updateQuantity = (index: number, qty: number) => {
     if (qty < 1) return
-    const updated = [...cart]
-    updated[index].quantity = qty
+    const updated = cart.map((item, i) => 
+      i === index ? { ...item, quantity: qty } : item
+    )
     setCart(updated)
     localStorage.setItem('teamdolly-cart', JSON.stringify(updated))
   }
@@ -60,7 +61,7 @@ export default function CartPage() {
             {cart.map((item, i) => (
               <div key={i} className="flex items-center gap-6 bg-[#171717] border border-[#2a2a2a] rounded p-4">
                 <div 
-                  className="w-20 h-20 rounded flex items-center justify-center text-xs"
+                  className="w-20 h-20 rounded flex items-center justify-center text-xs font-semibold"
                   style={{ 
                     backgroundColor: item.color === 'White' ? '#f0f0f0' : 
                                     item.color === 'Pink' ? '#ff69b4' : 
