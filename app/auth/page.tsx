@@ -1,36 +1,33 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 export default function AuthPage() {
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setMessage('')
 
-    // Automatically points to local dev or live site depending on where you run it
-    const redirectToUrl = typeof window !== 'undefined' 
-      ? `${window.location.origin}/admin` 
-      : 'https://teamdolly.co.za/admin'
-
-    const { error } = await supabase.auth.signInWithOtp({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
-      options: {
-        emailRedirectTo: redirectToUrl
-      }
+      password,
     })
 
     if (error) {
       setMessage(error.message)
-    } else {
-      setMessage('Check your email for the login link!')
+      setLoading(false)
+    } else if (data.session) {
+      // Successfully authenticated, push straight to the clean dashboard!
+      router.push('/admin')
     }
-    setLoading(false)
   }
 
   return (
@@ -51,12 +48,25 @@ export default function AuthPage() {
               placeholder="admin@daflame.co.za"
             />
           </div>
+
+          <div>
+            <label className="block text-sm text-[#888] mb-2">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+              className="w-full bg-[#171717] border border-[#2a2a2a] rounded px-4 py-3 text-white focus:border-[#ff2d78] focus:outline-none transition-colors"
+              placeholder="••••••••"
+            />
+          </div>
+
           <button
             type="submit"
             disabled={loading}
             className="w-full bg-[#ff2d78] text-white py-3 rounded font-semibold tracking-widest uppercase hover:bg-[#e0135f] transition disabled:opacity-50"
           >
-            {loading ? 'Sending...' : 'Send Magic Link'}
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
