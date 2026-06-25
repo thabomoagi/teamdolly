@@ -6,9 +6,11 @@ import { supabase } from '@/lib/supabase'
 
 interface OrderItem {
   id: string
-  order_id: string // Added order_id field
+  order_id: string
   product_name: string
   price: number
+  fee: number | null
+  net_amount: number | null
   color: string
   size: string
   quantity: number
@@ -20,7 +22,6 @@ interface OrderItem {
   created_at: string
 }
 
-// Grouped interface for rendering row aggregations
 interface GroupedOrder {
   order_id: string
   customer_name: string | null
@@ -37,6 +38,8 @@ interface GroupedOrder {
     price: number
   }[]
   totalPrice: number
+  totalFee: number
+  totalNet: number
 }
 
 export default function AdminPage() {
@@ -59,23 +62,23 @@ export default function AdminPage() {
       const { data } = await supabase
         .from('orders')
         .select('*')
+        .neq('status', 'pending')
         .order('created_at', { ascending: false })
       
       if (data) setOrders(data)
-      setLoading(false)
+      loading && setLoading(false)
     }
 
     checkAuthAndFetch()
   }, [router])
 
-  // Update status for the whole order transaction via order_id
   const updateOrderStatus = async (orderId: string, status: string) => {
     await supabase.from('orders').update({ status }).eq('order_id', orderId)
     
-    // Re-fetch updated data safely
     const { data } = await supabase
       .from('orders')
       .select('*')
+      .neq('status', 'pending')
       .order('created_at', { ascending: false })
     if (data) setOrders(data)
   }
@@ -84,12 +87,10 @@ export default function AdminPage() {
     return null 
   }
 
-  // --- CALCULATIONS & AGGREGATION ---
-  
-  // Financial metrics stay accurate based on raw item prices
-  const totalRevenue = orders.filter(o => o.status === 'paid').reduce((sum, o) => sum + o.price, 0)
+  const totalNetRevenue = orders
+    .filter(o => o.status === 'paid' || o.status === 'shipped')
+    .reduce((sum, o) => sum + (o.net_amount || o.price), 0)
 
-  // Group raw rows into consolidated orders
   const groupedOrdersMap: { [key: string]: GroupedOrder } = {}
 
   orders.forEach(item => {
@@ -103,7 +104,9 @@ export default function AdminPage() {
         status: item.status,
         created_at: item.created_at,
         items: [],
-        totalPrice: 0
+        totalPrice: 0,
+        totalFee: 0,
+        totalNet: 0
       }
     }
     
@@ -116,12 +119,12 @@ export default function AdminPage() {
     })
     
     groupedOrdersMap[item.order_id].totalPrice += item.price
+    groupedOrdersMap[item.order_id].totalFee += item.fee || 0
+    groupedOrdersMap[item.order_id].totalNet += item.net_amount || item.price
   })
 
   const groupedOrdersList = Object.values(groupedOrdersMap)
-  
-  // Pending metric based on unique checkout invoices
-  const pendingCount = groupedOrdersList.filter(o => o.status === 'pending').length
+  const processingCount = groupedOrdersList.filter(o => o.status === 'paid').length
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-[#e8e8e8] font-sans p-6">
@@ -130,23 +133,23 @@ export default function AdminPage() {
 
       <div className="grid grid-cols-3 gap-4 mb-8">
         <div className="bg-[#171717] border border-[#2a2a2a] rounded p-4">
-          <p className="text-[#888] text-xs uppercase tracking-wider">Total Orders</p>
+          <p className="text-[#888] text-xs uppercase tracking-wider">Successful Orders</p>
           <p className="text-2xl font-bold text-white">{groupedOrdersList.length}</p>
         </div>
         <div className="bg-[#171717] border border-[#2a2a2a] rounded p-4">
-          <p className="text-[#888] text-xs uppercase tracking-wider">Pending</p>
-          <p className="text-2xl font-bold text-[#f5d000]">{pendingCount}</p>
+          <p className="text-[#888] text-xs uppercase tracking-wider">To Process</p>
+          <p className="text-2xl font-bold text-[#f5d000]">{processingCount}</p>
         </div>
         <div className="bg-[#171717] border border-[#2a2a2a] rounded p-4">
-          <p className="text-[#888] text-xs uppercase tracking-wider">Revenue</p>
-          <p className="text-2xl font-bold text-[#1db954]">R{totalRevenue}</p>
+          <p className="text-[#888] text-xs uppercase tracking-wider">Net Revenue</p>
+          <p className="text-2xl font-bold text-[#1db954]">R{totalNetRevenue.toFixed(2)}</p>
         </div>
       </div>
 
       {loading ? (
         <p className="text-[#888]">Loading...</p>
       ) : groupedOrdersList.length === 0 ? (
-        <p className="text-[#888]">No orders yet</p>
+        <p className="text-[#888]">No successful orders yet</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -155,7 +158,7 @@ export default function AdminPage() {
                 <th className="p-3">Date</th>
                 <th className="p-3">Order ID</th>
                 <th className="p-3">Products Purchased</th>
-                <th className="p-3">Total Price</th>
+                <th className="p-3">Financials (Gross/Fee/Net)</th>
                 <th className="p-3">Email</th>
                 <th className="p-3">Name</th>
                 <th className="p-3">Phone</th>
@@ -185,8 +188,10 @@ export default function AdminPage() {
                       ))}
                     </ul>
                   </td>
-                  <td className="p-3 font-semibold text-[#1db954]">
-                    R{order.totalPrice}
+                  <td className="p-3 whitespace-nowrap text-xs space-y-0.5">
+                    <div className="text-gray-400">Gross: R{order.totalPrice.toFixed(2)}</div>
+                    <div className="text-red-400">Fee: -R{order.totalFee.toFixed(2)}</div>
+                    <div className="text-[#1db954] font-semibold">Net: R{order.totalNet.toFixed(2)}</div>
                   </td>
                   <td className="p-3 text-[#888]">{order.email || '-'}</td>
                   <td className="p-3 whitespace-nowrap">{order.customer_name || '-'}</td>
@@ -203,7 +208,6 @@ export default function AdminPage() {
                       onChange={e => updateOrderStatus(order.order_id, e.target.value)}
                       className="bg-[#171717] border border-[#2a2a2a] rounded px-2 py-1 text-xs"
                     >
-                      <option value="pending">Pending</option>
                       <option value="paid">Paid</option>
                       <option value="shipped">Shipped</option>
                       <option value="cancelled">Cancelled</option>
